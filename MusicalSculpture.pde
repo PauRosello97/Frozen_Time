@@ -15,19 +15,12 @@ void setup()  {
   size(900, 900, P3D);
   pendulum = new Pendulum();
   currentCube = new Cube(0,0,0,0,0);
-  oscP5 = new OscP5(this, 57121);
-  myRemoteLocation = new NetAddress("128.111.26.92", 57121);
+  oscP5 = new OscP5(this, 9999); // Processing works with 9999. No bigger!
+  myRemoteLocation = new NetAddress("127.0.0.1", 9999);
   
   float cubeSize = SPACE_SIZE / GRID_SIZE;
   spaceCube = new Cube(0, 0, 0, SPACE_SIZE, 0);
   
-  int[][][] notes = {
-    {{0, 0, G[0], 0, 0 }, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}},
-    {{0, 0, G[0], 0, 0 }, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}},
-    {{0, 0, G[0], 0, 0 }, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}},
-    {{0, 0, G[0], 0, 0 }, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}},
-    {{0, 0, G[0], 0, 0 }, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}, {0, 0, G[0], 0, 0}}
-  }; 
   cubes = new ArrayList<Cube>();
   for(int i=0; i<GRID_SIZE; i++){
     for(int j=0; j<GRID_SIZE; j++){
@@ -64,8 +57,8 @@ void draw()  {
         playNote(cube.note);
         currentCube = cube;
       }
-      cube.draw();  
-    }
+       
+    }cube.draw(); 
       
   }
   strokeWeight(3);
@@ -76,7 +69,7 @@ void draw()  {
 }
 
 void playNote(int note){
-  //println(note);  
+  println(note);  
   OscMessage myMessage = new OscMessage("/note");
   
   myMessage.add(note); /* add an int to the osc message */

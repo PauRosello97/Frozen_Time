@@ -1,0 +1,12 @@
+final int[] C =  {0,  12, 24};
+final int[] Cs = {1,  13, 25};
+final int[] D =  {2,  14, 26};
+final int[] Ds = {3,  15, 27};
+final int[] E =  {4,  16, 28};
+final int[] F =  {5,  17, 29};
+final int[] Fs = {6,  18, 30};
+final int[] G =  {7,  19, 31};
+final int[] Gs = {8,  20, 32};
+final int[] A =  {9,  21, 33};
+final int[] As = {10, 22, 34};
+final int[] B =  {11, 23, 35};

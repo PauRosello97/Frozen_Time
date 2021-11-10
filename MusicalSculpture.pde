@@ -10,22 +10,23 @@ Cube currentCube;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 final int SELECTED_NOTE = 5;
+int lastBassNote = -1;
 
 void setup()  {
   size(900, 900, P3D);
   pendulum = new Pendulum();
-  currentCube = new Cube(0,0,0,0,0);
+  currentCube = new Cube(0,0,0,0,0,0);
   oscP5 = new OscP5(this, 57121); // Processing works with 9999. No bigger!
   myRemoteLocation = new NetAddress("127.0.0.1", 9999);
   
   float cubeSize = SPACE_SIZE / GRID_SIZE;
-  spaceCube = new Cube(0, 0, 0, SPACE_SIZE, 0);
+  spaceCube = new Cube(0, 0, 0, SPACE_SIZE, -1, -1);
   
   cubes = new ArrayList<Cube>();
   for(int i=0; i<GRID_SIZE; i++){
     for(int j=0; j<GRID_SIZE; j++){
       for(int k=0; k<GRID_SIZE; k++){
-        cubes.add(new Cube(-SPACE_SIZE/2+(i+0.5)*cubeSize, -SPACE_SIZE/2+(j+0.5)*cubeSize, -SPACE_SIZE/2+(k+0.5)*cubeSize, cubeSize, notes[i][j][k]));
+        cubes.add(new Cube(-SPACE_SIZE/2+(i+0.5)*cubeSize, -SPACE_SIZE/2+(j+0.5)*cubeSize, -SPACE_SIZE/2+(k+0.5)*cubeSize, cubeSize, notes[i][j][k], bassNotes[i][j][k]));
       }
     }
   }
@@ -54,7 +55,7 @@ void draw()  {
    
     if(cube.contains(pendulum)){
       if(cube != currentCube){
-        playNote(cube.note);
+        playNote(cube);
         currentCube = cube;
       }
        
@@ -68,14 +69,22 @@ void draw()  {
   pendulum.draw();
 }
 
-void playNote(int note){
-  println(note);  
-  OscMessage myMessage = new OscMessage("/note");
+void playNote(Cube cube){
+  int note = cube.note;
+  int bassNote = cube.bassNote;
+  println(bassNote);  
   
-  myMessage.add(note); /* add an int to the osc message */
-
-  /* send the message */
-  oscP5.send(myMessage, myRemoteLocation); 
+  OscMessage noteMessage = new OscMessage("/note");
+  noteMessage.add(note); 
+  oscP5.send(noteMessage, myRemoteLocation); 
+  
+  if(bassNote!=-1 && bassNote != lastBassNote){
+    lastBassNote = cube.bassNote;  
+    OscMessage bassMessage = new OscMessage("/bass");
+    bassMessage.add(bassNote); 
+    oscP5.send(bassMessage, myRemoteLocation); 
+  }
+  
 }
 
 void oscEvent(OscMessage m) {

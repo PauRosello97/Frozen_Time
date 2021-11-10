@@ -15,7 +15,7 @@ void setup()  {
   size(900, 900, P3D);
   pendulum = new Pendulum();
   currentCube = new Cube(0,0,0,0,0);
-  oscP5 = new OscP5(this, 9999); // Processing works with 9999. No bigger!
+  oscP5 = new OscP5(this, 57121); // Processing works with 9999. No bigger!
   myRemoteLocation = new NetAddress("127.0.0.1", 9999);
   
   float cubeSize = SPACE_SIZE / GRID_SIZE;
@@ -78,9 +78,20 @@ void playNote(int note){
   oscP5.send(myMessage, myRemoteLocation); 
 }
 
-void oscEvent(OscMessage theOscMessage) {
+void oscEvent(OscMessage m) {
   /* print the address pattern and the typetag of the received OscMessage */
-  print("### received an osc message.");
-  print(" addrpattern: "+theOscMessage.addrPattern());
-  println(" typetag: "+theOscMessage.typetag());
+  println("### received an osc message.");
+  println(m + "");
+  if(m.checkAddrPattern("/position")){
+    String v = m.get(0).stringValue();
+    String[] coord = v.split(" ");
+    println(v);
+    float x = float(coord[0].substring(2));
+    float y = float(coord[1].substring(2));
+    float z = float(coord[2].substring(2));
+    pendulum.x = x;
+    pendulum.y = -(z-7)*1.5+SPACE_SIZE/2;
+    pendulum.z = y;
+    println("[" + x + ", " + y + ", " + z + "]"); 
+  }
 }

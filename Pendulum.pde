@@ -8,7 +8,7 @@ class Pendulum{
   }
   
   void draw(){
-    update();
+    //update();
     push();
     noStroke();
     fill(255);

@@ -41,7 +41,7 @@ final int NOTHING = 0;
 final int KICK = 1;
 
 final float ACCELERATION_THRESHOLD = 0.05;
-final float VEL_THRESHOLD = 0.05;
+final float VEL_THRESHOLD = 1.2;
 
 final int SELECTED_NOTE = 5;
 

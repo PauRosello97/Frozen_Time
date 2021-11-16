@@ -15,7 +15,7 @@ void setup()  {
   size(900, 900, P3D);
   pendulum = new Pendulum();
   currentCube = new Cube(0,0,0,0,0,0);
-  oscP5 = new OscP5(this, 57121); // Processing works with 9999. No bigger!
+  oscP5 = new OscP5(this, 57121); // Processing works with 9999. No greater!
   myRemoteLocation = new NetAddress("127.0.0.1", 9999);
   
   leftFoot = new Foot(LEFT);
@@ -44,7 +44,7 @@ void draw()  {
 
   translate(width/2, height/2, 0);
   rotateX(-PI/6);
-  rotateY(PI/3);
+  rotateY(HALF_PI);
   stroke(255);
   noFill();
   
@@ -60,10 +60,11 @@ void draw()  {
     }
   }
   
-  handleEvents();
+  //handleEvents();
+  sendMovementData();
   
   leftFoot.draw();
-  rightFoot.draw();
+  //rightFoot.draw();
   
   strokeWeight(3);
   stroke(255, 0, 0);
@@ -75,7 +76,7 @@ void draw()  {
 void playNote(Cube cube){
   int note = cube.note;
   int bassNote = cube.bassNote;
-  println(bassNote);  
+  //println(bassNote);  
   
   OscMessage noteMessage = new OscMessage("/note");
   noteMessage.add(note); 
@@ -89,21 +90,36 @@ void playNote(Cube cube){
   }
 }
 
+void sendMovementData(){
+  // Velocity
+  OscMessage vMessage = new OscMessage("/velocity");
+  vMessage.add(leftFoot.getVelocityMag()); 
+  oscP5.send(vMessage, myRemoteLocation); 
+  
+  // Acceleration
+  OscMessage aMessage = new OscMessage("/acceleration");
+  aMessage.add(leftFoot.getAcceleration()); 
+  oscP5.send(aMessage, myRemoteLocation); 
+}
+
 void oscEvent(OscMessage m) {
+  //println("received");
   /* print the address pattern and the typetag of the received OscMessage */
-  println("### received an osc message.");
-  println(m + "");
+  //println("### received an osc message.");
+  //println(m + "");
   if(m.checkAddrPattern("/position")){
     String v = m.get(0).stringValue();
     String[] coord = v.split(" ");
-    println(v);
+    //println(v);
     float x = float(coord[0].substring(2));
     float y = float(coord[1].substring(2));
     float z = float(coord[2].substring(2));
     pendulum.x = x;
     pendulum.y = -(z-7)*1.5+SPACE_SIZE/2;
     pendulum.z = y;
-    println("[" + x + ", " + y + ", " + z + "]"); 
+    
+    leftFoot.update(x, -(z-7)*1.5+SPACE_SIZE/2, y);
+    //println("[" + x + ", " + y + ", " + z + "]"); 
   }
 }
 

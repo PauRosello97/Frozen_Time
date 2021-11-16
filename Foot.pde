@@ -19,11 +19,8 @@ class Foot{
   }
   
   void draw(){
-    //handleEvents();
-    //lastVelocity = getVelocity();
-    lastVelocityMag = getVelocityMag();
-    lastPosition = getPosition();
-    update();
+    
+    //update();
     
     fill(255);
     noStroke();
@@ -49,7 +46,10 @@ class Foot{
     float v = getVelocityMag();
     int event = NOTHING;
     
-    if(v < VEL_THRESHOLD && lastVelocityMag >= VEL_THRESHOLD) event = KICK;
+    if(v < VEL_THRESHOLD && lastVelocityMag >= VEL_THRESHOLD){
+      event = KICK;
+      //println(v + " - " + lastVelocityMag);
+    }
     
     // Update lastAcceleration;
     lastAcceleration = a;
@@ -58,6 +58,9 @@ class Foot{
   }
   
   void update(){
+    lastVelocityMag = getVelocityMag();
+    lastPosition = getPosition();
+    
     float t = (type==1 ? PI : 0) + millis() * STEP_SPEED * 0.001;
     v = sin(t);
     if(v<0) v =0;
@@ -66,6 +69,15 @@ class Foot{
     x = r*sin(startAngle + p);
     y = SPACE_SIZE/2-10*sin(v);
     z = r*cos(startAngle + p);
+  }
+  
+  void update(float _x, float _y, float _z){
+    lastVelocityMag = getVelocityMag();
+    lastPosition = getPosition();
+    
+    x = _x;
+    y = _y;
+    z = _z;
   }
   
   float[] getPosition(){

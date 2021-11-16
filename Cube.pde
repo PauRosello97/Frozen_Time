@@ -16,7 +16,7 @@ class Cube{
   void draw(){
     push();
     translate(x, y, z);
-    if(bassNote == G[0]) fill(127);
+    //if(bassNote == G[0]) fill(127);
     box(size); //TODO: Displaying size
     pop();
   }

@@ -3,13 +3,12 @@ import netP5.*;
 
 Pendulum pendulum;
 ArrayList<Cube> cubes;
-final int SPACE_SIZE = 400;
-final int GRID_SIZE = 5;
 Cube spaceCube;
 Cube currentCube;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
-final int SELECTED_NOTE = 5;
+Foot leftFoot, rightFoot;
+
 int lastBassNote = -1;
 
 void setup()  {
@@ -19,8 +18,15 @@ void setup()  {
   oscP5 = new OscP5(this, 57121); // Processing works with 9999. No bigger!
   myRemoteLocation = new NetAddress("127.0.0.1", 9999);
   
+  leftFoot = new Foot(LEFT);
+  rightFoot = new Foot(RIGHT);
+  
   float cubeSize = SPACE_SIZE / GRID_SIZE;
   spaceCube = new Cube(0, 0, 0, SPACE_SIZE, -1, -1);
+  
+  float fov = PI/3.0;
+  float cameraZ = (height/2.0) / tan(fov/2.0);
+  perspective(fov, float(width)/float(height), cameraZ/2.0, cameraZ*2.0);
   
   cubes = new ArrayList<Cube>();
   for(int i=0; i<GRID_SIZE; i++){
@@ -36,13 +42,6 @@ void draw()  {
   background(0);
   lights();
 
-  if(mousePressed) {
-    ortho(-width/2, width/2, -height/2, height/2);
-  } else {
-    float fov = PI/3.0;
-    float cameraZ = (height/2.0) / tan(fov/2.0);
-    perspective(fov, float(width)/float(height), cameraZ/2.0, cameraZ*2.0);
-  }
   translate(width/2, height/2, 0);
   rotateX(-PI/6);
   rotateY(PI/3);
@@ -52,20 +51,24 @@ void draw()  {
   stroke(255);
   strokeWeight(1);
   for(Cube cube : cubes){
-   
     if(cube.contains(pendulum)){
       if(cube != currentCube){
         playNote(cube);
         currentCube = cube;
       }
-       
-    }cube.draw(); 
-      
+      cube.draw();  
+    }
   }
+  
+  handleEvents();
+  
+  leftFoot.draw();
+  rightFoot.draw();
+  
   strokeWeight(3);
   stroke(255, 0, 0);
+  noFill();
   spaceCube.draw();
-  
   pendulum.draw();
 }
 
@@ -84,7 +87,6 @@ void playNote(Cube cube){
     bassMessage.add(bassNote); 
     oscP5.send(bassMessage, myRemoteLocation); 
   }
-  
 }
 
 void oscEvent(OscMessage m) {
@@ -103,4 +105,15 @@ void oscEvent(OscMessage m) {
     pendulum.z = y;
     println("[" + x + ", " + y + ", " + z + "]"); 
   }
+}
+
+void handleEvents(){
+  int event = leftFoot.handleEvents();
+  if(event == NOTHING) event = rightFoot.handleEvents();
+  if(event == KICK) sendMessage("kick");
+}
+
+void sendMessage(String value){
+  OscMessage noteMessage = new OscMessage("/"+value);
+  oscP5.send(noteMessage, myRemoteLocation); 
 }

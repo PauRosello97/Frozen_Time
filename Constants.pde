@@ -29,3 +29,22 @@ final int[][][] notes = {
   // <---------X------------------->       <------------X------------->         <-------------X--------------->      <------------X------------->          <-------------X-------------->
   
   // <--------------------------------------------------------------------------------------- Y ---------------------------------------------------------------------------------------->
+  
+  
+final int LEFT = -1;
+final int RIGHT = 1;
+
+final int STEP_SPEED = 5;
+final float STEP_LENGTH = 1;
+
+final int NOTHING = 0;
+final int KICK = 1;
+
+final float ACCELERATION_THRESHOLD = 0.05;
+final float VEL_THRESHOLD = 0.05;
+
+final int SELECTED_NOTE = 5;
+
+
+final int SPACE_SIZE = 400;
+final int GRID_SIZE = 5;
